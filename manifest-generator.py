@@ -19,12 +19,13 @@ def decompress_gz_files(directory_path):
 
 def main():
     # Validate command line arguments
-    if len(sys.argv) < 2 or len(sys.argv) > 3:
-        print("Usage: python main.py <directory_path> [-g]")
+    if len(sys.argv) < 2 or len(sys.argv) > 4:
+        print("Usage: python main.py <directory_path> [-g] [-r]")
         sys.exit(1)
 
     directory_path = sys.argv[1]
-    use_gz = len(sys.argv) == 3 and sys.argv[2] == '-g'
+    use_gz = '-g' in sys.argv
+    use_r = '-r' in sys.argv
     
     # Is path valid?
     if not os.path.isdir(directory_path):
@@ -59,12 +60,21 @@ def main():
     
     names.sort(key=natural_sort_key)
     names = [name for name in names if name]
-   
-    for i in range(len(names)):
-        if names[i][-1] == '1':
-            directions[i] = "forward"
-        elif names[i][-1] == '2':
-            directions[i] = "reverse"
+
+    if use_r:
+        # Assign directions based on R1/r1 and R2/r2 in the filename
+        for i in range(len(file_names)):
+            fname = file_names[i]
+            if 'R1' in fname or 'r1' in fname:
+                directions[i] = "forward"
+            elif 'R2' in fname or 'r2' in fname:
+                directions[i] = "reverse"
+    else:
+        for i in range(len(names)):
+            if names[i][-1] == '1':
+                directions[i] = "forward"
+            elif names[i][-1] == '2':
+                directions[i] = "reverse"
             
     # Create a CSV file
     csv_name = f"{dir_name}_manifest.csv"
@@ -83,9 +93,6 @@ def main():
             if f.endswith('.fastq') and not f.endswith('.fastq.gz'):
                 fastq_path = os.path.join(directory_path, f)
                 os.remove(fastq_path)
-
-    # ...existing code...
-            
 
 if __name__ == "__main__":
     main()
