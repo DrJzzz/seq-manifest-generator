@@ -20,7 +20,7 @@ def decompress_gz_files(directory_path):
 def main():
     # Validate command line arguments
     if len(sys.argv) < 2 or len(sys.argv) > 4:
-        print("Usage: python main.py <directory_path> [-g] [-r]")
+        print("Usage: python manifest-generator.py <directory_path> [-g] [-r]")
         sys.exit(1)
 
     directory_path = sys.argv[1]
